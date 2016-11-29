@@ -1,0 +1,109 @@
+
+    <div class="ui stackable container menu" id="menu">
+      <a class="item" (click)="modalAddTag(true)">
+        {{translateLibrary.modalTag.title}}
+      </a>
+      <a class="item" (click)="modalHelp()">
+        {{translateLibrary.modalHelp.title}}
+      </a>
+      <a class="item" (click)="modalContact()">
+        {{translateLibrary.modalContact.title}}
+      </a>
+      <a class="item" (click)="modalAbout()">
+        About
+      </a>
+      <div class="menu">
+        <div class="item">
+            <select class="ui small selection dropdown custon_dropdown" #lang (change)="changeLang(lang.value)">
+              <option value="en" selected><i class="gb flag"></i> English</option>
+              <option value="ru" ><i class="ru flag"></i> Россия</option>
+            </select>
+        </div>
+      </div>
+      <div class="right menu">
+          <div class="item">
+              <div class="ui icon input custom_input">
+                  <input type="text" placeholder="Search..." [(ngModel)]="argumentForFilter" (ngModelChange)="sendDataToFilter($event)">
+                  <i class="search link icon"></i>
+              </div>
+          </div>
+      </div>
+    </div>
+
+<div class="ui basic modal" id="modalAddTag">
+    <i class="close icon"></i>
+    <div class="header">
+        {{translateLibrary.modalTag.title}}
+    </div>
+    <div class="content">
+        <form class="ui form" id="addTagForm">
+            <div class="field">
+                <label>{{translateLibrary.modalTag.set1}}</label>
+                <input type="text" name="first-name" placeholder="{{translateLibrary.modalTag.set1}}" name="name" [(ngModel)]="data.name">
+            </div>
+            <div class="field">
+                <label>{{translateLibrary.modalTag.set2}}</label>
+                <textarea rows="3" placeholder="{{translateLibrary.modalTag.set2}}" name="comment" [(ngModel)]="data.comment"></textarea>
+            </div>
+            <div class="field">
+                <label>{{translateLibrary.modalTag.set3}}</label>
+                <div class="three fields">
+                    <div class="field">
+                        <input type="text" placeholder="Lat" disabled name="lat" [(ngModel)]="data.coordinateX">
+                    </div>
+                    <div class="field">
+                        <input type="text" placeholder="Lng" disabled name="lng" [(ngModel)]="data.coordinateY">
+                    </div>
+                    <div class="field">
+                        <input type="text" placeholder="Time" disabled name="date" [(ngModel)]="data.time">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="ui cancel red basic inverted button"><i class="remove icon"></i>{{translateLibrary.modalTag.set4}}</div>
+        <div class="ui ok green basic inverted button" (click)="bootstrapDataForSend(data)"><i class="checkmark icon"></i>{{translateLibrary.modalTag.set5}}</div>
+    </div>
+</div>
+
+<div class="ui basic modal" id="modalHelp">
+    <i class="close icon"></i>
+    <div class="header">
+        {{translateLibrary.modalHelp.title}}
+    </div>
+    <div class="content">
+      <h3> {{translateLibrary.modalHelp.p1.title}} </h3>
+        <div class="content custom_content">
+          <p [innerHTML]="translateLibrary.modalHelp.p1.text"></p>
+        </div>
+      <h3> {{translateLibrary.modalHelp.p2.title}} </h3>
+        <div class="content custom_content">
+          <p [innerHTML]="translateLibrary.modalHelp.p2.text"></p>
+        </div>
+      <h3> {{translateLibrary.modalHelp.p3.title}} </h3>
+        <div class="content custom_content">
+          <p [innerHTML]="translateLibrary.modalHelp.p3.text"></p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui ok green basic inverted button" ><i class="checkmark icon"></i>{{translateLibrary.modalHelp.button}}</div>
+    </div>
+</div>
+
+<div class="ui basic modal" id="modalContact">
+    <i class="close icon"></i>
+    <div class="header">
+        {{translateLibrary.modalContact.title}}
+    </div>
+    <div class="content">
+      <div class="content custom_content">
+        <p>
+          {{translateLibrary.modalContact.p1}} antgeo@gmail.com
+        </p>
+      </div>
+    </div>
+    <div class="actions">
+        <div class="ui ok green basic inverted button" ><i class="checkmark icon"></i>{{translateLibrary.modalContact.button}}</div>
+    </div>
+</div>

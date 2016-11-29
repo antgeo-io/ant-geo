@@ -1,0 +1,142 @@
+html, body {
+    height: auto !important;
+}
+
+#map {
+    height: 85%;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
+}
+
+#menu {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.custon_dropdown {
+   min-width: 8em !important;
+}
+
+.lableClass {
+    /*background: red;*/
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+}
+
+.labelClass_specie {
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.labelClass_specie:first-letter {
+    text-transform: uppercase;
+}
+
+.labelClass_comment {
+    /*margin-left: 10px;*/
+}
+
+.labelClass_coor {
+    /*font-style: italic;*/
+    float: left;
+}
+
+.labelClass_time {
+    float: right;
+    /*font-style: italic;*/
+}
+
+.labelClass_clear {
+    clear: both;
+    margin-bottom: -10px;
+}
+
+.labelClass_hr {
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.lableClass_label {
+    white-space: nowrap;
+    display: inline;
+    position: relative;
+    top: -22px;
+    left: 20px;
+    font-size: 17px;
+    background: white;
+    padding: 1px 10px;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+
+.labelClass_point img {
+    width: 32px;
+    position: absolute;
+    top: -23px;
+    left: -10px;
+}
+
+.leaflet-popup {
+    bottom: 24px !important;
+    left: -161px !important;
+}
+
+#addTagForm label {
+    color: white;
+}
+
+.ui.ordered.list .list > .item::before, .ui.ordered.list > .item::before, ol.ui.list li::before {
+  color: white !important;
+}
+
+.custom_content {
+    padding-left: 2em;
+}
+
+.ui.selection.dropdown>.delete.icon, .ui.selection.dropdown>.dropdown.icon, .ui.selection.dropdown>.search.icon {
+    top: .98571429em !important;
+}
+
+.ui.icon.input>i.circular.icon {
+    top: .2em !important;
+}
+
+.ui.celled.ordered.list .list>.item, .ui.celled.ordered.list>.item {
+  margin-top: 0.7rem;
+}
+
+.ui.modal>.header:not(.ui) {
+  font-size: 2rem !important;
+}
+
+.modalHelpImg {
+    width: 95%;
+    display: block;
+    text-align: center;
+    margin: 15 auto !important;
+}
+
+.lableClass_label:hover .arrow {
+    right: -28px;
+}
+
+.lableClass_label:hover:after {
+    box-shadow: inset 0px -5px 30px rgba(255, 255, 255, 0.4), 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.lableClass_label:active:after {
+    box-shadow: inset 0px 0px 30px rgba(0, 0, 0, 0.3), 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.ui.menu .item {
+    /*padding: .42857143em 1.14285714em !important;*/
+    height: 50px;
+}
+
+.custom_input {
+  height: 40px;
+}
