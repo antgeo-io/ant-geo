@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { MarkerService } from '../marker-service/marker.service'; 
+import { MarkerService } from '../marker-service/marker.service';
 declare var L: any;
 declare var markersCluster: any;
 
@@ -21,6 +21,7 @@ export class MapComponent {
     globalMap = null; // Variable for mapbox
     markersCluster = new L.MarkerClusterGroup(); // Init cluster markers
     changeCursorVar: boolean; // The boolean which permits change cursor on the map
+    markerArr: any[] = []; // Array markers
 
     public sendCoor(data) { // Sending coordinate for menu component
         this.eventMapComponent.emit(data);
@@ -76,6 +77,28 @@ export class MapComponent {
         this.createMarkers(data); // Send data to create-markers function
     }
 
+    public openPopupLink(local) { // Function, which open the tag from the link
+      let localLink = Number(local)
+      if (localLink && typeof localLink === 'number' && localLink <= this.markerArr.length && localLink > -1) {
+        let localMarker = this.markerArr[localLink];
+        this.globalMap.setView(localMarker._latlng, 20)
+        localMarker.openPopup();
+      }
+    }
+
+    public getDataFromLink = (function() { // This function must called only once
+        let executed = false;
+        return function () {
+            if (!executed) {
+                executed = true;
+                if (window.location.search) { // Check, if link have the id for tag
+                  let locat = window.location.search;
+                  this.openPopupLink(locat.replace(/[\\=?]|id/g, ''))
+                }
+            }
+        };
+    })();
+
     public createMarkers(markers) { // Function which create markers on the map
         this.markersCluster = new L.MarkerClusterGroup();
         for (let i in markers) {
@@ -114,8 +137,10 @@ export class MapComponent {
                 minWidth: 320
             });
             this.markersCluster.addLayer(marker);
+            this.markerArr.push(marker);
         }
         this.globalMap.addLayer(this.markersCluster);
+        this.getDataFromLink();
     }
 
     ngOnInit() { // function init

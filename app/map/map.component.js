@@ -18,6 +18,19 @@ var MapComponent = (function () {
         this.globalDeclareVarForMapbox = L; // Global variable for mapbox
         this.globalMap = null; // Variable for mapbox
         this.markersCluster = new L.MarkerClusterGroup(); // Init cluster markers
+        this.markerArr = []; // Array markers
+        this.getDataFromLink = (function () {
+            var executed = false;
+            return function () {
+                if (!executed) {
+                    executed = true;
+                    if (window.location.search) {
+                        var locat = window.location.search;
+                        this.openPopupLink(locat.replace(/[\\=?]|id/g, ''));
+                    }
+                }
+            };
+        })();
     }
     MapComponent.prototype.sendCoor = function (data) {
         this.eventMapComponent.emit(data);
@@ -62,6 +75,14 @@ var MapComponent = (function () {
         this.globalMap.removeLayer(this.markersCluster); // Delete the old array
         this.createMarkers(data); // Send data to create-markers function
     };
+    MapComponent.prototype.openPopupLink = function (local) {
+        var localLink = Number(local);
+        if (localLink && typeof localLink === 'number' && localLink <= this.markerArr.length && localLink > -1) {
+            var localMarker = this.markerArr[localLink];
+            this.globalMap.setView(localMarker._latlng, 20);
+            localMarker.openPopup();
+        }
+    };
     MapComponent.prototype.createMarkers = function (markers) {
         this.markersCluster = new L.MarkerClusterGroup();
         for (var i in markers) {
@@ -77,8 +98,10 @@ var MapComponent = (function () {
                 minWidth: 320
             });
             this.markersCluster.addLayer(marker);
+            this.markerArr.push(marker);
         }
         this.globalMap.addLayer(this.markersCluster);
+        this.getDataFromLink();
     };
     MapComponent.prototype.ngOnInit = function () {
         this.initMap();

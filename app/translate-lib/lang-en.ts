@@ -66,5 +66,10 @@ export const lang_en_trans = {
     'title': 'Contacts',
     'p1': `If you have some suggestions or comments about working this a service, write on this mail: `,
     'button': 'Cancel'
+  },
+  'modalAbout': {
+    'title': 'About',
+    'p1': `some text`,
+    'button': 'Cancel'
   }
 }

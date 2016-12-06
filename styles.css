@@ -40,11 +40,11 @@ html, body {
 
 .labelClass_coor {
     /*font-style: italic;*/
-    float: left;
+    text-align: center;
 }
 
 .labelClass_time {
-    float: right;
+  text-align: center;
     /*font-style: italic;*/
 }
 
@@ -71,6 +71,29 @@ html, body {
     padding: 1px 10px;
     border-radius: 10px;
     border: 1px solid #333;
+}
+
+@media only screen and (max-width: 991px) and (min-width: 768px) {
+  .right > .item {
+        width: 177px !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .ui.stackable.menu .item {
+    display: block !important;
+    line-height: 22px !important;
+    text-align: center;
+  }
+
+  .ui.selection.dropdown {
+    top: -7px !important;
+    width: 100%;
+  }
+
+  .ui.menu:not(.vertical) .item>.input {
+    top: -1px !important;
+  }
 }
 
 .labelClass_point img {
@@ -140,3 +163,10 @@ html, body {
 .custom_input {
   height: 40px;
 }
+
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+	-webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+	transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+	}

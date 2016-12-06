@@ -8,11 +8,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require("@angular/core");
-var send_service_1 = require("../send-service/send.service");
-var marker_service_1 = require("../marker-service/marker.service");
-var lang_en_1 = require("../translate-lib/lang-en");
-var lang_ru_1 = require("../translate-lib/lang-ru");
+var core_1 = require('@angular/core');
+var send_service_1 = require('../send-service/send.service');
+var marker_service_1 = require('../marker-service/marker.service');
+var lang_en_1 = require('../translate-lib/lang-en');
+var lang_ru_1 = require('../translate-lib/lang-ru');
 var MenuComponent = (function () {
     function MenuComponent(_sendService, _markerService) {
         this._sendService = _sendService;
@@ -110,29 +110,30 @@ var MenuComponent = (function () {
         $('.ui.dropdown').dropdown();
         this.changeLang('en');
     };
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], MenuComponent.prototype, "_sendFilteringArrayToComp", void 0);
+    __decorate([
+        // this output send filtering array to map comp
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], MenuComponent.prototype, "_sendEventReloadMap", void 0);
+    __decorate([
+        // this output call function in map component when add marker
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], MenuComponent.prototype, "_changeCursorMap", void 0);
+    MenuComponent = __decorate([
+        core_1.Component({
+            moduleId: module.id,
+            providers: [send_service_1.SendService, marker_service_1.MarkerService],
+            selector: 'my-menu',
+            templateUrl: './menu.component.html'
+        }), 
+        __metadata('design:paramtypes', [send_service_1.SendService, marker_service_1.MarkerService])
+    ], MenuComponent);
     return MenuComponent;
 }());
-__decorate([
-    core_1.Output(),
-    __metadata("design:type", Object)
-], MenuComponent.prototype, "_sendFilteringArrayToComp", void 0);
-__decorate([
-    core_1.Output(),
-    __metadata("design:type", Object)
-], MenuComponent.prototype, "_sendEventReloadMap", void 0);
-__decorate([
-    core_1.Output(),
-    __metadata("design:type", Object)
-], MenuComponent.prototype, "_changeCursorMap", void 0);
-MenuComponent = __decorate([
-    core_1.Component({
-        moduleId: module.id,
-        providers: [send_service_1.SendService, marker_service_1.MarkerService],
-        selector: 'my-menu',
-        templateUrl: './menu.component.html'
-    }),
-    __metadata("design:paramtypes", [send_service_1.SendService,
-        marker_service_1.MarkerService])
-], MenuComponent);
 exports.MenuComponent = MenuComponent;
 //# sourceMappingURL=menu.component.js.map
