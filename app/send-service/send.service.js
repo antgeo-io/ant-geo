@@ -8,13 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require("@angular/core");
 var http_1 = require('@angular/http');
+var core_1 = require("@angular/core");
 var Subject_1 = require('rxjs/Subject');
 var SendService = (function () {
     function SendService(http) {
         this.http = http;
         this.eventReloadMap = new Subject_1.Subject();
+        this.showSuccessWindow = new Subject_1.Subject();
         this.url = 'https://api.mongolab.com/api/1/databases/ant_map_test/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
         this.http = http;
     }
@@ -23,7 +24,8 @@ var SendService = (function () {
         this.http.post(this.url, data)
             .subscribe(function (data) {
             console.log(data);
-            _this.eventReloadMap.next('someValue');
+            _this.eventReloadMap.next('someValue'); // Reloading map
+            _this.showSuccessWindow.next('soneValue'); // Show a message
         });
     };
     SendService = __decorate([

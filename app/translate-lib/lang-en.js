@@ -9,6 +9,7 @@ exports.lang_en_trans = {
         'set4': 'Cancel',
         'set5': 'Send'
     },
+    'placeholder': 'Search...',
     'modalHelp': {
         'title': 'Help',
         'p1': {
@@ -23,6 +24,10 @@ exports.lang_en_trans = {
             'title': 'How to change style the map?',
             'text': "\n               <div class=\"ui celled ordered list\">\n                 <div class=\"item\">\n                   To change a style of the map, move the cursor on the icon \"layers\" .\n                   <img class=\"ui rounded image modalHelpImg\" src=\"../../assets/img/modalImg5.png\">\n                 </div>\n                 <div class=\"item\">\n                   Select the style of the map.\n                   <img class=\"ui rounded image modalHelpImg\" src=\"../../assets/img/modalImg6.png\">\n                 </div>\n               </div>\n               "
         },
+        'p4': {
+            'title': 'How to get the link on the tag?',
+            'text': "\n              <div class=\"ui celled ordered list\">\n                <div class=\"item\">\n                  To get the link on the tag, click on the marker to show the pop-up window.\n                  <img class=\"ui rounded image modalHelpImg\" src=\"../../assets/img/modalImg7.png\">\n                </div>\n                <div class=\"item\">\n                  Then just click on the this button, the link copied in clipboard.\n                  <img class=\"ui rounded image modalHelpImg\" src=\"../../assets/img/modalImg8.png\">\n                </div>\n              </div>\n              "
+        },
         'button': 'Cancel'
     },
     'modalContact': {
@@ -34,6 +39,23 @@ exports.lang_en_trans = {
         'title': 'About',
         'p1': "some text",
         'button': 'Cancel'
-    }
+    },
+    'copyLinkButton': 'Copy link tag',
+    'errorWindow': {
+        'p1': {
+            'title': 'The field "Species" is not filled or filled incorrectly',
+            'text': "Writing ant species is allowed only the Latin alphabet, also allowed next symbols:\n              (); -; .;"
+        },
+        'p2': {
+            'title': 'The field "Comment" is not filled',
+            'text': 'Please, fill this field. Example: the colony is near a large stone.'
+        }
+    },
+    'errorGetMarkersWindow': {
+        'title': 'Server not responding',
+        'text': "Unfortunately, the server with data about tags is not responding.\n             You can only view the map, adding new tags is currently not possible."
+    },
+    'successAddMarker': 'Your tag is added!',
+    'addingMarkerOnMap': 'Click on the point where located the ants'
 };
 //# sourceMappingURL=lang-en.js.map

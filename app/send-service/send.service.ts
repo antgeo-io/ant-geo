@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
 import { Http } from '@angular/http';
-import { Subject }    from 'rxjs/Subject';
+import { Injectable } from "@angular/core";
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class SendService {
@@ -9,14 +9,16 @@ export class SendService {
     }
 
     public eventReloadMap = new Subject();
+    public showSuccessWindow = new Subject();
 
     url = 'https://api.mongolab.com/api/1/databases/ant_map_test/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
 
-    send(data) { // function which sends data to the server
+    public send(data) { // function which sends data to the server
         this.http.post(this.url, data)
             .subscribe(data => {
                 console.log(data);
-                this.eventReloadMap.next('someValue');
+                this.eventReloadMap.next('someValue'); // Reloading map
+                this.showSuccessWindow.next('soneValue'); // Show a message
             });
     }
 }

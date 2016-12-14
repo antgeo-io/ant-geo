@@ -1,6 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FormGroup } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, style, state, animate, transition, trigger } from '@angular/core';
 import { SendService } from '../send-service/send.service';
 import { MarkerService } from '../marker-service/marker.service';
 declare var $: any; // I don't want to use Jquery :(
@@ -12,7 +10,27 @@ import { lang_ru_trans, lang_ru_name } from '../translate-lib/lang-ru';
     moduleId: module.id,
     providers: [SendService, MarkerService],
     selector: 'my-menu',
-    templateUrl: './menu.component.html'
+    templateUrl: './menu.component.html',
+    animations: [ // Animation for show\hide error widnow in form ("add marker" modal)
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate(200, style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate(200, style({ opacity: 0 }))
+            ])
+        ]),
+        trigger('scale', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate(200, style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate(200, style({ opacity: 0 }))
+            ])
+        ])
+    ]
 })
 
 export class MenuComponent {
@@ -20,45 +38,41 @@ export class MenuComponent {
         private _sendService: SendService,
         private _markerService: MarkerService
     ) {
-      let _this = this;
-      _sendService.eventReloadMap.subscribe(value => {_this.sendEventReloadMap(value)});
+        let _this = this;
+        _sendService.eventReloadMap.subscribe(value => { _this.sendEventReloadMap(value) });
+        _sendService.showSuccessWindow.subscribe(value => { _this.showSuccessAddMarker(value) });
     }
 
-    @Output() _sendFilteringArrayToComp = new EventEmitter(); // this output send filtering array to map comp
-    @Output() _sendEventReloadMap = new EventEmitter(); // this output call function in map component when add marker
-    @Output() _changeCursorMap = new EventEmitter();
+    @Output() _sendFilteringArrayToComp = new EventEmitter(); // This output send filtering array to map comp
+    @Output() _sendEventReloadMap = new EventEmitter(); // This output call function in map component when add marker
+    @Output() _changeCursorMap = new EventEmitter(); // This output change cursor in map (in map.component)
 
-    resolutionAddTag: boolean = false; // variable which allows open the modal windows
+    resolutionAddTag: boolean = false; // Variable which allows open the modal windows
     MarkerDataForFilter: any[] = []; // Array which sending to filter
     finalFilterArray: any[] = []; // Array which will sent to map component
-
-    public sendDataToFilter(e) { // sending array to filter function
-        this.filteringArray(e, this.MarkerDataForFilter);
+    translateLibrary: any;
+    flagsForNotification: any = {
+        failedGetMarkers: {
+          forButton: false,
+          forClose: false
+        },
+        successAddedMarker: false,
+        addingMarkerOnMap: false
     }
 
-    public sendFilteringArrayToComp(data) { // sending filtering array to map component
-        this._sendFilteringArrayToComp.emit(data);
+    checkForm = { // The object which contains boolean var. for check
+        name: { // For input 'Species'
+            message: <boolean>false, // For red windows. If filled incorrect, show window with tip
+            filled: <boolean>false // If the field filled, true
+        },
+        comment: { // For input 'Comment'
+            message: <boolean>false,
+            filled: <boolean>false
+        },
+        filledAll: <boolean>false // If both the fields filled, true
     }
 
-    public sendEventReloadMap(data) { // When adding the marker, need to reload a function, which add markers on the map
-      this._sendEventReloadMap.emit(data);
-    }
-
-    public filteringArray(args, data) { // filter function
-        this.finalFilterArray.length = 0;
-        let _this = this;
-        return this.sendFilteringArrayToComp(
-                  data.filter(item => {
-                      let nameLower = item.name.toLowerCase();
-                      let argumentLower = args.toLowerCase();
-                      if (argumentLower.length >= 2 && nameLower.indexOf(argumentLower) + 1) {
-                          return _this.finalFilterArray.push(item);
-                      } else {}
-                  }
-            ));
-    }
-
-    public data = { // the data to send
+    data = { // the data to send
         name: <string>null,
         comment: <string>null,
         coordinateX: <number>null,
@@ -66,24 +80,57 @@ export class MenuComponent {
         time: <string>null
     }
 
-    public bootstrapDataForSend(data: any[]) { // order function in the service
-        this._sendService.send(data); //a function which sends data to the server
+    protected sendDataToFilter(e) { // sending array to filter function
+        this.filteringArray(e, this.MarkerDataForFilter);
     }
 
-    public modalAddTag(bool: boolean): void { //1 step, user click on the button "add tag", so allow open a modal window
+    protected sendFilteringArrayToComp(data) { // sending filtering array to map component
+        this._sendFilteringArrayToComp.emit(data);
+    }
+
+    protected sendEventReloadMap(data) { // When adding the marker, need to reload a function, which add markers on the map
+        this._sendEventReloadMap.emit(data);
+    }
+
+    protected filteringArray(args, data) { // filter function
+        this.finalFilterArray.length = 0;
+        let _this = this;
+        return this.sendFilteringArrayToComp(
+            data.filter(item => {
+                let nameLower = item.name.toLowerCase();
+                let argumentLower = args.toLowerCase();
+                if (argumentLower.length >= 2 && nameLower.indexOf(argumentLower) + 1) {
+                    return _this.finalFilterArray.push(item);
+                } else { }
+            }
+            ));
+    }
+
+    protected bootstrapDataForSend(data: any[]) { // order function in the service
+        if (this.checkForm.filledAll) {
+            this._sendService.send(data); //a function which sends data to the server
+        }
+    }
+
+    protected modalAddTag(bool: boolean): void { //1 step, user click on the button "add tag", so allow open a modal window
+        this.flagsForNotification.addingMarkerOnMap = bool;
         this.resolutionAddTag = bool;
         this._changeCursorMap.emit(bool)
     }
 
-    public modalHelp() {
-      $('#modalHelp').modal('show');
+    protected modalHelp() {
+        $('#modalHelp').modal('show');
     }
 
-    public modalContact() {
-      $('#modalContact').modal('show');
+    protected modalContact() {
+        $('#modalContact').modal('show');
     }
 
-    public takeCoor(e): void { //2 step, user click on the map, and open modal window
+    protected modalAbout() {
+      $('#modalAbout').modal('show');
+    }
+
+    protected takeCoor(e): void { //2 step, user click on the map, and open modal window
         console.log(e);
         let _this = this;
         if (this.resolutionAddTag) {
@@ -98,7 +145,7 @@ export class MenuComponent {
         }
     }
 
-    public setDate() { // this function return the date
+    protected setDate() { // this function return the date
         let date = new Date();
 
         let options = {
@@ -114,22 +161,89 @@ export class MenuComponent {
         return date.toLocaleString("en-US", options);
     }
 
-    translateLibrary;
+    protected changeLang(data) {
+        console.log(data)
+        if (lang_en_name == data) {
+            this.translateLibrary = lang_en_trans;
+        } else {
+            this.translateLibrary = lang_ru_trans;
+        }
+    }
 
-    public changeLang(data) {
-      console.log(data)
-      if (lang_en_name == data) {
-        this.translateLibrary = lang_en_trans;
-      } else {
-        this.translateLibrary = lang_ru_trans;
-      }
+    protected checkFormName() { // Checking input "Species"...
+        if (this.data.name && /^[a-zA-Z()-.\s]+$/i.test(this.data.name)) { // If the field have text, and text written latin language, true
+            this.checkForm.name.filled = true; // Field filled!
+            this.checkForm.name.message = false; // Hide red window
+        } else { // Else the field wrong
+            this.checkForm.name.filled = false; // Field is not filled
+            this.checkForm.name.message = true; // Show the red window
+            this.checkForm.filledAll = false; // All fields is not filled
+        }
+        if (this.checkForm.name.filled && this.checkForm.comment.filled) {
+            this.checkForm.filledAll = true; // For final verification
+        }
+    }
+
+    protected checkFormComment() { // Checking input "Comment"...
+        if (this.data.comment) { // All similarly like checkFormName()
+            this.checkForm.comment.filled = true;
+            this.checkForm.comment.message = false;
+        } else {
+            this.checkForm.comment.filled = false;
+            this.checkForm.comment.message = true;
+            this.checkForm.filledAll = false;
+        }
+        if (this.checkForm.name.filled && this.checkForm.comment.filled) {
+            this.checkForm.filledAll = true;
+        }
+    }
+
+    protected getMarkerForFilter() {
+        this._markerService.getMarker() // taking array with marker
+            .subscribe(
+              res => { this.MarkerDataForFilter = res; },
+              err => {
+                  this._markerService.getMarkerLocal().subscribe( // If severs with markers not answer, loading local json file
+                      res => {
+                          this.MarkerDataForFilter = res;
+                          this.flagsForNotification.failedGetMarkers.forClose = true;
+                          this.flagsForNotification.failedGetMarkers.forButton = true;
+                      }
+                  )
+              }
+            );
+    }
+
+    protected closeMessage(e) { // For closing message (semantic-ui)
+      console.log(e)
+    }
+
+    protected showSuccessAddMarker(value) {
+      this.flagsForNotification.successAddedMarker = true;
+      setTimeout(() => {
+        console.log('added marker close')
+        this.flagsForNotification.successAddedMarker = false;
+      }, 5000);
+    }
+
+    protected openSidebar() { // Function opened a sidebar
+      $('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
     }
 
     ngOnInit() {
         var _this = this;
-        var getMarkerJsons = this._markerService.getMarker() // taking array with marker
-            .subscribe(function(response) { _this.MarkerDataForFilter = response; });
+        this.getMarkerForFilter();
         $('.ui.dropdown').dropdown();
         this.changeLang('en');
+
+        $('.ui.sidebar a').click(function () {
+          $('.ui.sidebar').sidebar('toggle');
+        })
     }
 }
+
+/*
+  О Проекте antgeo
+
+  Цель сервиса antgeo
+*/

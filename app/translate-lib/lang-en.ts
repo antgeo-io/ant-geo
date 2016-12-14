@@ -9,6 +9,7 @@ export const lang_en_trans = {
     'set4': 'Cancel',
     'set5': 'Send'
   },
+  'placeholder': 'Search...',
   'modalHelp': {
     'title': 'Help',
     'p1': {
@@ -60,6 +61,21 @@ export const lang_en_trans = {
                </div>
                `
     },
+    'p4': {
+      'title': 'How to get the link on the tag?',
+      'text': `
+              <div class="ui celled ordered list">
+                <div class="item">
+                  To get the link on the tag, click on the marker to show the pop-up window.
+                  <img class="ui rounded image modalHelpImg" src="../../assets/img/modalImg7.png">
+                </div>
+                <div class="item">
+                  Then just click on the this button, the link copied in clipboard.
+                  <img class="ui rounded image modalHelpImg" src="../../assets/img/modalImg8.png">
+                </div>
+              </div>
+              `
+    },
     'button': 'Cancel'
   },
   'modalContact': {
@@ -71,5 +87,24 @@ export const lang_en_trans = {
     'title': 'About',
     'p1': `some text`,
     'button': 'Cancel'
-  }
+  },
+  'copyLinkButton': 'Copy link tag',
+  'errorWindow': {
+    'p1': {
+      'title': 'The field "Species" is not filled or filled incorrectly',
+      'text': `Writing ant species is allowed only the Latin alphabet, also allowed next symbols:
+              (); -; .;`
+    },
+    'p2': {
+      'title': 'The field "Comment" is not filled',
+      'text': 'Please, fill this field. Example: the colony is near a large stone.'
+    }
+  },
+  'errorGetMarkersWindow': {
+    'title': 'Server not responding',
+    'text': `Unfortunately, the server with data about tags is not responding.
+             You can only view the map, adding new tags is currently not possible.`
+  },
+  'successAddMarker': 'Your tag is added!',
+  'addingMarkerOnMap': 'Click on the point where located the ants'
 }

@@ -17,12 +17,31 @@ var MenuComponent = (function () {
     function MenuComponent(_sendService, _markerService) {
         this._sendService = _sendService;
         this._markerService = _markerService;
-        this._sendFilteringArrayToComp = new core_1.EventEmitter(); // this output send filtering array to map comp
-        this._sendEventReloadMap = new core_1.EventEmitter(); // this output call function in map component when add marker
-        this._changeCursorMap = new core_1.EventEmitter();
-        this.resolutionAddTag = false; // variable which allows open the modal windows
+        this._sendFilteringArrayToComp = new core_1.EventEmitter(); // This output send filtering array to map comp
+        this._sendEventReloadMap = new core_1.EventEmitter(); // This output call function in map component when add marker
+        this._changeCursorMap = new core_1.EventEmitter(); // This output change cursor in map (in map.component)
+        this.resolutionAddTag = false; // Variable which allows open the modal windows
         this.MarkerDataForFilter = []; // Array which sending to filter
         this.finalFilterArray = []; // Array which will sent to map component
+        this.flagsForNotification = {
+            failedGetMarkers: {
+                forButton: false,
+                forClose: false
+            },
+            successAddedMarker: false,
+            addingMarkerOnMap: false
+        };
+        this.checkForm = {
+            name: {
+                message: false,
+                filled: false // If the field filled, true
+            },
+            comment: {
+                message: false,
+                filled: false
+            },
+            filledAll: false // If both the fields filled, true
+        };
         this.data = {
             name: null,
             comment: null,
@@ -32,6 +51,7 @@ var MenuComponent = (function () {
         };
         var _this = this;
         _sendService.eventReloadMap.subscribe(function (value) { _this.sendEventReloadMap(value); });
+        _sendService.showSuccessWindow.subscribe(function (value) { _this.showSuccessAddMarker(value); });
     }
     MenuComponent.prototype.sendDataToFilter = function (e) {
         this.filteringArray(e, this.MarkerDataForFilter);
@@ -55,9 +75,12 @@ var MenuComponent = (function () {
         }));
     };
     MenuComponent.prototype.bootstrapDataForSend = function (data) {
-        this._sendService.send(data); //a function which sends data to the server
+        if (this.checkForm.filledAll) {
+            this._sendService.send(data); //a function which sends data to the server
+        }
     };
     MenuComponent.prototype.modalAddTag = function (bool) {
+        this.flagsForNotification.addingMarkerOnMap = bool;
         this.resolutionAddTag = bool;
         this._changeCursorMap.emit(bool);
     };
@@ -66,6 +89,9 @@ var MenuComponent = (function () {
     };
     MenuComponent.prototype.modalContact = function () {
         $('#modalContact').modal('show');
+    };
+    MenuComponent.prototype.modalAbout = function () {
+        $('#modalAbout').modal('show');
     };
     MenuComponent.prototype.takeCoor = function (e) {
         console.log(e);
@@ -103,24 +129,81 @@ var MenuComponent = (function () {
             this.translateLibrary = lang_ru_1.lang_ru_trans;
         }
     };
+    MenuComponent.prototype.checkFormName = function () {
+        if (this.data.name && /^[a-zA-Z()-.\s]+$/i.test(this.data.name)) {
+            this.checkForm.name.filled = true; // Field filled!
+            this.checkForm.name.message = false; // Hide red window
+        }
+        else {
+            this.checkForm.name.filled = false; // Field is not filled
+            this.checkForm.name.message = true; // Show the red window
+            this.checkForm.filledAll = false; // All fields is not filled
+        }
+        if (this.checkForm.name.filled && this.checkForm.comment.filled) {
+            this.checkForm.filledAll = true; // For final verification
+        }
+    };
+    MenuComponent.prototype.checkFormComment = function () {
+        if (this.data.comment) {
+            this.checkForm.comment.filled = true;
+            this.checkForm.comment.message = false;
+        }
+        else {
+            this.checkForm.comment.filled = false;
+            this.checkForm.comment.message = true;
+            this.checkForm.filledAll = false;
+        }
+        if (this.checkForm.name.filled && this.checkForm.comment.filled) {
+            this.checkForm.filledAll = true;
+        }
+    };
+    MenuComponent.prototype.getMarkerForFilter = function () {
+        var _this = this;
+        this._markerService.getMarker() // taking array with marker
+            .subscribe(function (res) { _this.MarkerDataForFilter = res; }, function (err) {
+            _this._markerService.getMarkerLocal().subscribe(// If severs with markers not answer, loading local json file
+            function (// If severs with markers not answer, loading local json file
+                res) {
+                _this.MarkerDataForFilter = res;
+                _this.flagsForNotification.failedGetMarkers.forClose = true;
+                _this.flagsForNotification.failedGetMarkers.forButton = true;
+            });
+        });
+    };
+    MenuComponent.prototype.closeMessage = function (e) {
+        console.log(e);
+    };
+    MenuComponent.prototype.showSuccessAddMarker = function (value) {
+        var _this = this;
+        this.flagsForNotification.successAddedMarker = true;
+        setTimeout(function () {
+            console.log('added marker close');
+            _this.flagsForNotification.successAddedMarker = false;
+        }, 5000);
+    };
+    MenuComponent.prototype.openSidebar = function () {
+        $('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+    };
     MenuComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var getMarkerJsons = this._markerService.getMarker() // taking array with marker
-            .subscribe(function (response) { _this.MarkerDataForFilter = response; });
+        this.getMarkerForFilter();
         $('.ui.dropdown').dropdown();
         this.changeLang('en');
+        $('.ui.sidebar a').click(function () {
+            $('.ui.sidebar').sidebar('toggle');
+        });
     };
     __decorate([
         core_1.Output(), 
         __metadata('design:type', Object)
     ], MenuComponent.prototype, "_sendFilteringArrayToComp", void 0);
     __decorate([
-        // this output send filtering array to map comp
+        // This output send filtering array to map comp
         core_1.Output(), 
         __metadata('design:type', Object)
     ], MenuComponent.prototype, "_sendEventReloadMap", void 0);
     __decorate([
-        // this output call function in map component when add marker
+        // This output call function in map component when add marker
         core_1.Output(), 
         __metadata('design:type', Object)
     ], MenuComponent.prototype, "_changeCursorMap", void 0);
@@ -129,11 +212,36 @@ var MenuComponent = (function () {
             moduleId: module.id,
             providers: [send_service_1.SendService, marker_service_1.MarkerService],
             selector: 'my-menu',
-            templateUrl: './menu.component.html'
+            templateUrl: './menu.component.html',
+            animations: [
+                core_1.trigger('fadeInOut', [
+                    core_1.transition(':enter', [
+                        core_1.style({ opacity: 0 }),
+                        core_1.animate(200, core_1.style({ opacity: 1 }))
+                    ]),
+                    core_1.transition(':leave', [
+                        core_1.animate(200, core_1.style({ opacity: 0 }))
+                    ])
+                ]),
+                core_1.trigger('scale', [
+                    core_1.transition(':enter', [
+                        core_1.style({ opacity: 0 }),
+                        core_1.animate(200, core_1.style({ opacity: 1 }))
+                    ]),
+                    core_1.transition(':leave', [
+                        core_1.animate(200, core_1.style({ opacity: 0 }))
+                    ])
+                ])
+            ]
         }), 
         __metadata('design:paramtypes', [send_service_1.SendService, marker_service_1.MarkerService])
     ], MenuComponent);
     return MenuComponent;
 }());
 exports.MenuComponent = MenuComponent;
+/*
+  О Проекте antgeo
+
+  Цель сервиса antgeo
+*/
 //# sourceMappingURL=menu.component.js.map

@@ -1,4 +1,4 @@
-import { Injectable, Component, Directive, Output, EventEmitter, Input, SimpleChange, OnInit } from '@angular/core';
+import { Injectable, Component, Output, EventEmitter, Input } from '@angular/core';
 
 import { MenuComponent } from './menu/menu.component';
 import { MapComponent } from './map/map.component';
@@ -22,5 +22,4 @@ export class AppComponent {
   constructor () { }
 
   ngOnInit () {  }
-
 }

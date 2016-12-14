@@ -8,11 +8,18 @@ export class MarkerService {
     this.http = http;
   }
 
-  url = 'https://api.mongolab.com/api/1/databases/ant_map_test/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
+  apiKey: string = 'qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
+  url: string = `https://api.mongolab.com/api/1/databases/ant_map/collections/tasks?apiKey=${this.apiKey}`;
+  local_url: string = './app/local-markers/local.json';
   //'https://api.mongolab.com/api/1/databases/ant_map/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
 
-  getMarker() {
+  public getMarker() { // Get markers
     return this.http.get(this.url)
+               .map(res => res.json())
+  }
+
+  public getMarkerLocal() { // If server(mongoDB) with markers not answer, loading local json file
+    return this.http.get(this.local_url)
                .map(res => res.json())
   }
 }

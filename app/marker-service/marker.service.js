@@ -14,12 +14,18 @@ require('rxjs/add/operator/map');
 var MarkerService = (function () {
     function MarkerService(http) {
         this.http = http;
-        this.url = 'https://api.mongolab.com/api/1/databases/ant_map_test/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
+        this.apiKey = 'qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
+        this.url = "https://api.mongolab.com/api/1/databases/ant_map/collections/tasks?apiKey=" + this.apiKey;
+        this.local_url = './app/local-markers/local.json';
         this.http = http;
     }
     //'https://api.mongolab.com/api/1/databases/ant_map/collections/tasks?apiKey=qC0p98Z69-yRKg7gn7T0Nul0VPIrbyw9';
     MarkerService.prototype.getMarker = function () {
         return this.http.get(this.url)
+            .map(function (res) { return res.json(); });
+    };
+    MarkerService.prototype.getMarkerLocal = function () {
+        return this.http.get(this.local_url)
             .map(function (res) { return res.json(); });
     };
     MarkerService = __decorate([

@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MarkerService } from '../marker-service/marker.service';
+
 declare var L: any;
+declare var Clipboard: any;
 declare var markersCluster: any;
 
 @Component({
@@ -17,25 +19,28 @@ export class MapComponent {
     @Output() eventMapComponent = new EventEmitter();
 
     arrayMarkers: any[] = []; // Start array markers
-    globalDeclareVarForMapbox = L; // Global variable for mapbox
-    globalMap = null; // Variable for mapbox
-    markersCluster = new L.MarkerClusterGroup(); // Init cluster markers
+    globalDeclareVarForMapbox: any = L; // Global variable for mapbox
+    globalMap: any = null; // Variable for mapbox
+    markersCluster: any = new L.MarkerClusterGroup(); // Init cluster markers
     changeCursorVar: boolean; // The boolean which permits change cursor on the map
     markerArr: any[] = []; // Array markers
+    executedForLink: boolean = true;
 
-    public sendCoor(data) { // Sending coordinate for menu component
+    protected sendCoor(data) { // Sending coordinate for menu component
         this.eventMapComponent.emit(data);
     }
 
-    public reloadMap(val) {
+    protected reloadMap(val) { // Reload the map when added new marker
+      console.log(val)
       this.getMarkerFunction();
     }
 
-    public changeCursor(data: boolean) { // Take value for changeCursorVar variable
+    protected changeCursor(data: boolean) { // Take value for changeCursorVar variable
       this.changeCursorVar = data;
     }
 
-    public takeFilteringArr(data) { // Gets filtering array and from nenu component
+    protected takeFilteringArr(data) { // Gets filtering array and from nenu component
+        console.log(data)
         if (data[0]) { // If filtering array have the markers, send his
             this.deleteLayerMap(data);
         } else { // Else send full array
@@ -65,19 +70,28 @@ export class MapComponent {
         });
     }
 
-    public getMarkerFunction () {
+    protected getMarkerFunction () {
       this.globalMap.removeLayer(this.markersCluster);
-      let _this = this;
-      let getMarkerJson = this._markerService.getMarker() // Gets markers from service
-          .subscribe(function(res) { console.log(res); _this.createMarkers(res); _this.arrayMarkers = res; });
+      this._markerService.getMarker() // Gets markers from service
+          .subscribe(
+            res => {
+              console.log(res);
+              this.createMarkers(res); this.arrayMarkers = res;
+            },
+            err => { // If severs with markers not answer, loading local json file
+              console.log('Local markers');
+              this._markerService.getMarkerLocal().subscribe(
+                res => {this.createMarkers(res); this.arrayMarkers = res;}
+              )
+            });
     }
 
-    public deleteLayerMap(data) {
+    protected deleteLayerMap(data) {
         this.globalMap.removeLayer(this.markersCluster); // Delete the old array
         this.createMarkers(data); // Send data to create-markers function
     }
 
-    public openPopupLink(local) { // Function, which open the tag from the link
+    protected openPopupLink(local) { // Function, which open the tag from the link
       let localLink = Number(local)
       if (localLink && typeof localLink === 'number' && localLink <= this.markerArr.length && localLink > -1) {
         let localMarker = this.markerArr[localLink];
@@ -86,21 +100,22 @@ export class MapComponent {
       }
     }
 
-    public getDataFromLink = (function() { // This function must called only once
-        let executed = false;
-        return function () {
-            if (!executed) {
-                executed = true;
-                if (window.location.search) { // Check, if link have the id for tag
-                  let locat = window.location.search;
-                  this.openPopupLink(locat.replace(/[\\=?]|id/g, ''))
-                }
-            }
-        };
-    })();
+    protected getDataFromLink () { // This function must called only once
+      if (this.executedForLink) {
+          this.executedForLink = false;
+          if (window.location.search) { // Check, if link have the id for tag
+            let locat = window.location.search;
+            this.openPopupLink(locat.replace(/[\\=?]|id/g, ''))
+          }
+      }
+    }
 
-    public createMarkers(markers) { // Function which create markers on the map
-        this.markersCluster = new L.MarkerClusterGroup();
+    protected createMarkers(markers) { // Function which create markers on the map
+        this.markersCluster = new L.MarkerClusterGroup({
+          spiderfyOnMaxZoom: true,
+          maxClusterRadius: 70,
+          disableClusteringAtZoom: 17
+        });
         for (let i in markers) {
             let marker = L.marker([Number(markers[i].coordinateX), Number(markers[i].coordinateY)], {
                 icon:
@@ -108,7 +123,7 @@ export class MapComponent {
                     className: 'lableClass',
                     html: `
                     <div class="labelClass_point">
-                      <img src="../../assets/img/map-marker-1.png">
+                      <img src="../../assets/img/map-marker-2.png">
                     </div>
                     <div class="lableClass_label">
                       ${markers[i].name.split(' ')[0].slice(0, 1).toUpperCase() + '. ' + markers[i].name.split(' ')[1]}
@@ -123,6 +138,12 @@ export class MapComponent {
               <div class="labelClass_comment">
                 ${markers[i].comment}
               </div>
+              <hr class="labelClass_hr"/>
+              <button class="ui basic button btn labelClass_copyLink" data-tooltip="https://antgeo.github.io/?id=${i}"
+              data-clipboard-text="https://antgeo.github.io/?id=${i}" data-position="top center">
+                <i class="icon copy"></i>
+                Click for copy link tag
+              </button>
               <hr class="labelClass_hr"/>
               <div class="labelClass_coor">
                 ${markers[i].coordinateX}, ${markers[i].coordinateY}
@@ -145,5 +166,6 @@ export class MapComponent {
 
     ngOnInit() { // function init
         this.initMap();
+        new Clipboard('.btn');
     }
 }

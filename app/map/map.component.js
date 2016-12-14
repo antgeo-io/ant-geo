@@ -19,29 +19,20 @@ var MapComponent = (function () {
         this.globalMap = null; // Variable for mapbox
         this.markersCluster = new L.MarkerClusterGroup(); // Init cluster markers
         this.markerArr = []; // Array markers
-        this.getDataFromLink = (function () {
-            var executed = false;
-            return function () {
-                if (!executed) {
-                    executed = true;
-                    if (window.location.search) {
-                        var locat = window.location.search;
-                        this.openPopupLink(locat.replace(/[\\=?]|id/g, ''));
-                    }
-                }
-            };
-        })();
+        this.executedForLink = true;
     }
     MapComponent.prototype.sendCoor = function (data) {
         this.eventMapComponent.emit(data);
     };
     MapComponent.prototype.reloadMap = function (val) {
+        console.log(val);
         this.getMarkerFunction();
     };
     MapComponent.prototype.changeCursor = function (data) {
         this.changeCursorVar = data;
     };
     MapComponent.prototype.takeFilteringArr = function (data) {
+        console.log(data);
         if (data[0]) {
             this.deleteLayerMap(data);
         }
@@ -66,10 +57,17 @@ var MapComponent = (function () {
         });
     };
     MapComponent.prototype.getMarkerFunction = function () {
-        this.globalMap.removeLayer(this.markersCluster);
         var _this = this;
-        var getMarkerJson = this._markerService.getMarker() // Gets markers from service
-            .subscribe(function (res) { console.log(res); _this.createMarkers(res); _this.arrayMarkers = res; });
+        this.globalMap.removeLayer(this.markersCluster);
+        this._markerService.getMarker() // Gets markers from service
+            .subscribe(function (res) {
+            console.log(res);
+            _this.createMarkers(res);
+            _this.arrayMarkers = res;
+        }, function (err) {
+            console.log('Local markers');
+            _this._markerService.getMarkerLocal().subscribe(function (res) { _this.createMarkers(res); _this.arrayMarkers = res; });
+        });
     };
     MapComponent.prototype.deleteLayerMap = function (data) {
         this.globalMap.removeLayer(this.markersCluster); // Delete the old array
@@ -83,16 +81,29 @@ var MapComponent = (function () {
             localMarker.openPopup();
         }
     };
+    MapComponent.prototype.getDataFromLink = function () {
+        if (this.executedForLink) {
+            this.executedForLink = false;
+            if (window.location.search) {
+                var locat = window.location.search;
+                this.openPopupLink(locat.replace(/[\\=?]|id/g, ''));
+            }
+        }
+    };
     MapComponent.prototype.createMarkers = function (markers) {
-        this.markersCluster = new L.MarkerClusterGroup();
+        this.markersCluster = new L.MarkerClusterGroup({
+            spiderfyOnMaxZoom: true,
+            maxClusterRadius: 70,
+            disableClusteringAtZoom: 17
+        });
         for (var i in markers) {
             var marker = L.marker([Number(markers[i].coordinateX), Number(markers[i].coordinateY)], {
                 icon: L.divIcon({
                     className: 'lableClass',
-                    html: "\n                    <div class=\"labelClass_point\">\n                      <img src=\"../../assets/img/map-marker-1.png\">\n                    </div>\n                    <div class=\"lableClass_label\">\n                      " + (markers[i].name.split(' ')[0].slice(0, 1).toUpperCase() + '. ' + markers[i].name.split(' ')[1]) + "\n                    </div>\n                    "
+                    html: "\n                    <div class=\"labelClass_point\">\n                      <img src=\"../../assets/img/map-marker-2.png\">\n                    </div>\n                    <div class=\"lableClass_label\">\n                      " + (markers[i].name.split(' ')[0].slice(0, 1).toUpperCase() + '. ' + markers[i].name.split(' ')[1]) + "\n                    </div>\n                    "
                 })
             });
-            var customPopup = "\n              <div class=\"labelClass_specie\">\n                " + markers[i].name + "\n              </div>\n              <div class=\"labelClass_comment\">\n                " + markers[i].comment + "\n              </div>\n              <hr class=\"labelClass_hr\"/>\n              <div class=\"labelClass_coor\">\n                " + markers[i].coordinateX + ", " + markers[i].coordinateY + "\n              </div>\n              <div class=\"labelClass_time\">\n                " + markers[i].time + "\n              </div>\n              <div class=\"labelClass_clear\"> </div>\n            ";
+            var customPopup = "\n              <div class=\"labelClass_specie\">\n                " + markers[i].name + "\n              </div>\n              <div class=\"labelClass_comment\">\n                " + markers[i].comment + "\n              </div>\n              <hr class=\"labelClass_hr\"/>\n              <button class=\"ui basic button btn labelClass_copyLink\" data-tooltip=\"https://antgeo.github.io/?id=" + i + "\"\n              data-clipboard-text=\"https://antgeo.github.io/?id=" + i + "\" data-position=\"top center\">\n                <i class=\"icon copy\"></i>\n                Click for copy link tag\n              </button>\n              <hr class=\"labelClass_hr\"/>\n              <div class=\"labelClass_coor\">\n                " + markers[i].coordinateX + ", " + markers[i].coordinateY + "\n              </div>\n              <div class=\"labelClass_time\">\n                " + markers[i].time + "\n              </div>\n              <div class=\"labelClass_clear\"> </div>\n            ";
             marker.bindPopup(customPopup, {
                 closeButton: false,
                 minWidth: 320
@@ -105,6 +116,7 @@ var MapComponent = (function () {
     };
     MapComponent.prototype.ngOnInit = function () {
         this.initMap();
+        new Clipboard('.btn');
     };
     __decorate([
         core_1.Output(), 

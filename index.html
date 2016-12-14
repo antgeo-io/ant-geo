@@ -20,7 +20,7 @@
     <script>
       window.jQuery ||
       console.log('JQUERY NOT LOADED');
-      document.write('<script src="node_modules/failload-lib/jquery-3.1.1.min.js">\x3C/script>');
+      document.write('<script src="assets/failload-lib/jquery-3.1.1.min.js">\x3C/script>');
     </script>
     <!-- Jquery -->
 
@@ -29,7 +29,7 @@
     <script>
       window.$.site ||
       console.log('SEMANTIC-UI.JS NOT LOADED');
-      document.write('<script src="node_modules/failload-lib/semantic.min.js">\x3C/script>');
+      document.write('<script src="assets/failload-lib/semantic.min.js">\x3C/script>');
     </script>
     <!-- Semantic.js -->
 
@@ -38,7 +38,7 @@
     <script type="text/javascript">
       function semanticErrorFunc() {
         console.log('SEMANTIC-UI.CSS NOT LOADED');
-        $('head').append('<link rel="stylesheet" href="node_modules/failload-lib/semantic.min.css">')
+        $('head').append('<link rel="stylesheet" href="assets/failload-lib/semantic.min.css">')
       }
     </script>
     <!-- Semantic.css -->
@@ -48,7 +48,7 @@
     <script>
       window.L ||
       console.log('MAPBOX.JS NOT LOADED');
-      document.write('<script src="node_modules/failload-lib/mapbox.min.js">\x3C/script>');
+      document.write('<script src="assets/failload-lib/mapbox.min.js">\x3C/script>');
     </script>
     <!-- Mapbox.js -->
 
@@ -57,7 +57,7 @@
     <script type="text/javascript">
       function mapboxErrorFunc() {
         console.log('MAPBOX.CSS NOT LOADED');
-        $('head').append('<link rel="stylesheet" type="text/css" href="node_modules/failload-lib/mapbox.min.css">')
+        $('head').append('<link rel="stylesheet" type="text/css" href="assets/failload-lib/mapbox.min.css">')
       }
     </script>
     <!-- Mapbox.css -->
@@ -67,7 +67,7 @@
     <script>
       window.L.MarkerClusterGroup ||
       console.log('CLUSTER-MAPBOX NOT LOADED');
-      document.write('<script src="node_modules/failload-lib/markercluster.min.js">\x3C/script>')
+      document.write('<script src="assets/failload-lib/markercluster.min.js">\x3C/script>')
     </script>
     <!-- Marker cluster JS-->
 
@@ -76,10 +76,19 @@
     <script type="text/javascript">
       function clusterErrorFunc() {
         console.log('CLUSTER-MAPBOX.CSS NOT LOADED');
-        $('head').append('<link rel="stylesheet" type="text/css" href="node_modules/failload-lib/markercluster.css">')
+        $('head').append('<link rel="stylesheet" type="text/css" href="assets/failload-lib/markercluster.css">')
       }
     </script>
     <!-- Marker cluster CSS-->
+
+    <!-- Clipboard -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
+    <script>
+      window.Clipboard ||
+      console.log('CLIPBOARD NOT LOADED');
+      document.write('<script src="assets/failload-lib/clipboard.min.js">\x3C/script>')
+    </script>
+    <!-- Clipboard -->
 
     <script>
         System.import('app').catch(function(err) {
@@ -90,6 +99,6 @@
 </head>
 <!-- 3. Display the application -->
 <body>
-    <my-app></my-app>
+    <my-app>Antgeo loading...</my-app>
 </body>
 </html>
